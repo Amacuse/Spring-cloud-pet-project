@@ -1,0 +1,39 @@
+version: '2.2'
+
+services:
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    environment:
+      - STORAGE_TYPE=mem
+    ports:
+      - 9411:9411
+
+  discovery-service:
+    image: discovery-service:v1
+    ports:
+      - 8761:8761
+
+  catalog-service:
+    image: catalog-service:v1
+    ports:
+      - 8089:8089
+    depends_on:
+      - zipkin
+      - discovery-service
+
+  inventory-service:
+    image: inventory-service:v1
+    ports:
+      - 8090:8090
+    depends_on:
+      - zipkin
+      - discovery-service
+
+  product-service:
+    image: product-service:v1
+    ports:
+      - 8091:8091
+    depends_on:
+      - zipkin
+      - discovery-service
